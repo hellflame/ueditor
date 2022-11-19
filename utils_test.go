@@ -30,6 +30,7 @@ func TestParseDefault(t *testing.T) {
 		Weight float64  `default:"12.5"`
 		Jobs   []string `default:"chef|waiter|teacher"`
 		Part
+		extra *Part
 	}
 	x := &linux{}
 	applyDefault(x)
@@ -38,6 +39,9 @@ func TestParseDefault(t *testing.T) {
 	}
 	if x.Parent != "ok" {
 		t.Error("failed to apply for sub struct")
+	}
+	if x.extra != nil {
+		t.Error("pointer should not be applied")
 	}
 }
 
