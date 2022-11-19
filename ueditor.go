@@ -8,8 +8,44 @@ import (
 )
 
 type UEditor struct {
-	config  *Config
-	storage Storage
+	config    *Config
+	storage   Storage
+	srvPrefix string // resource servce prefix
+}
+
+const (
+	ImageSaveBase = "images"
+	FileSaveBase  = "files"
+)
+
+const (
+	StateOK             = "SUCCESS"
+	StateUploadExceed   = "文件大小超出 upload_max_filesize 限制"
+	StateFileSizeExceed = "文件大小超出 MAX_FILE_SIZE 限制"
+	StateFileIncomplete = "文件未被完整上传"
+	StateFileNotUpload  = "没有文件被上传"
+	StateFileEmpty      = "上传文件为空"
+)
+
+type UploadResp struct {
+	State    string
+	Url      string
+	Title    string
+	Original string
+	Type     string
+	Size     int
+}
+
+type ListResp struct {
+	State string
+	List  []FShard
+	Start int
+	Total int
+}
+
+type FShard struct {
+	Url   string
+	Mtime int
 }
 
 type Config struct {
@@ -91,6 +127,10 @@ func (u *UEditor) GetConfig() []byte {
 	return lowerCamalMarshal(*u.config)
 }
 
+func (u *UEditor) SetSrvPrefix(prefix string) {
+	u.srvPrefix = prefix
+}
+
 func (u *UEditor) GetActions() (c, ui, fi, li, lf string) {
 	config := u.config
 	c = config.ConfigActionName
@@ -101,13 +141,14 @@ func (u *UEditor) GetActions() (c, ui, fi, li, lf string) {
 	return
 }
 
-func (u *UEditor) SaveFile(base, prefix string, h *multipart.FileHeader, f io.Reader) UploadResp {
+func (u *UEditor) SaveFile(prefix string, h *multipart.FileHeader, f io.Reader) UploadResp {
 	resource, e := u.storage.Save(prefix, h, f)
 	if e != nil {
 		return UploadResp{
 			State: e.Error(),
 		}
 	}
+	base := u.srvPrefix
 	// non external
 	if !strings.Contains(resource, "://") {
 		resource = path.Join(base, resource)
@@ -120,20 +161,39 @@ func (u *UEditor) SaveFile(base, prefix string, h *multipart.FileHeader, f io.Re
 	}
 }
 
-func (u *UEditor) OnUploadImage(srvPrefix string, h *multipart.FileHeader, f io.Reader) UploadResp {
-	return u.SaveFile(srvPrefix, "images/", h, f)
+func (u *UEditor) ListFiles(prefix string, offset, size int) ListResp {
+	files, total := u.storage.List(prefix, offset, size)
+	tmp := make([]FShard, len(files))
+	base := u.srvPrefix
+	for idx, f := range files {
+		// non external
+		if !strings.Contains(f.Path, "://") {
+			f.Path = path.Join(base, f.Path)
+		}
+		tmp[idx] = FShard{Url: f.Path, Mtime: f.Modify}
+	}
+	return ListResp{
+		Total: total,
+		State: StateOK,
+		Start: offset,
+		List:  tmp,
+	}
 }
 
-func (u *UEditor) OnUploadFile(srvPrefix string, h *multipart.FileHeader, f io.Reader) UploadResp {
-	return u.SaveFile(srvPrefix, "files/", h, f)
+func (u *UEditor) OnUploadImage(h *multipart.FileHeader, f io.Reader) UploadResp {
+	return u.SaveFile(ImageSaveBase, h, f)
+}
+
+func (u *UEditor) OnUploadFile(h *multipart.FileHeader, f io.Reader) UploadResp {
+	return u.SaveFile(FileSaveBase, h, f)
 }
 
 func (u *UEditor) OnListImages(offset, size int) ListResp {
-	return ListResp{}
+	return u.ListFiles(ImageSaveBase, offset, size)
 }
 
 func (u *UEditor) OnListFiles(offset, size int) ListResp {
-	return ListResp{}
+	return u.ListFiles(FileSaveBase, offset, size)
 }
 
 func (u *UEditor) ReadFile(path string) (meta *MetaInfo, raw []byte, e error) {

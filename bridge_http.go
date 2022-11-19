@@ -15,6 +15,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 	// init config
 	c = tidyConfig(c)
 	srvPrefix := c.SrcServePrefix // => /resource/
+	editor.SetSrvPrefix(srvPrefix)
 	actionConfig, actionUpImage, actionUpFile, actionLsImage, actionLsFile := editor.GetActions()
 
 	// editor home asserts
@@ -47,9 +48,9 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 			}
 
 			if action == actionUpImage {
-				resp = lowerCamalMarshal(editor.OnUploadImage(srvPrefix, h, f))
+				resp = lowerCamalMarshal(editor.OnUploadImage(h, f))
 			} else {
-				resp = lowerCamalMarshal(editor.OnUploadFile(srvPrefix, h, f))
+				resp = lowerCamalMarshal(editor.OnUploadFile(h, f))
 			}
 		case actionLsImage, actionLsFile:
 			size, e := strconv.Atoi(r.URL.Query().Get("size"))
