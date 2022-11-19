@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+const metaSuffix = ".meta"
+
 type LocalStorage struct {
 	Base string
 }
@@ -26,7 +28,7 @@ func (l *LocalStorage) List(prefix string, offset, limit int) (files []FileInfo,
 	if exist, e := dirExist(saveDir); e != nil || !exist {
 		return
 	}
-	metaFiles, e := filepath.Glob(path.Join(saveDir, "*.meta"))
+	metaFiles, e := filepath.Glob(path.Join(saveDir, "*"+metaSuffix))
 	if e != nil {
 		return
 	}
@@ -40,7 +42,7 @@ func (l *LocalStorage) List(prefix string, offset, limit int) (files []FileInfo,
 		}
 		metaInfo = append(metaInfo, FileInfo{
 			Modify: int(s.ModTime().Unix()), Name: h.Filename,
-			Path: strings.TrimLeft(f, l.Base),
+			Path: strings.TrimRight(strings.TrimLeft(f, l.Base), metaSuffix),
 		})
 	}
 	sort.Slice(metaInfo, func(i, j int) bool {
@@ -61,7 +63,7 @@ func (l *LocalStorage) Read(p string) (*MetaInfo, []byte, error) {
 	if !fileExist(contentPath) {
 		return nil, nil, ErrFileMissing
 	}
-	metaPath := path.Join(l.Base, p+".meta")
+	metaPath := path.Join(l.Base, p+metaSuffix)
 	if !fileExist(metaPath) {
 		return nil, nil, ErrFileMetaMissing
 	}
@@ -85,7 +87,7 @@ func (l *LocalStorage) Save(prefix string, h *multipart.FileHeader, f io.Reader)
 	contentHash := fmt.Sprintf("%x", md5.Sum(content))
 	saveDir := path.Join(l.Base, prefix)
 	contentPath := path.Join(saveDir, contentHash)
-	metaPath := path.Join(saveDir, fmt.Sprintf("%s.meta", contentHash))
+	metaPath := path.Join(saveDir, fmt.Sprintf("%s%s", contentHash, metaSuffix))
 	if dirExist, e := dirExist(saveDir); !dirExist {
 		if createE := os.MkdirAll(saveDir, os.ModePerm); createE != nil {
 			return "", createE
