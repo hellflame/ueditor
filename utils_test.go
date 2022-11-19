@@ -14,6 +14,10 @@ func TestLowerCamalMarshal(t *testing.T) {
 	if string(lowerCamalMarshal(&linux{Name: "ok"}))[2] != 'n' {
 		t.Error("not lower")
 	}
+	tmp := []linux{{"hellflame"}}
+	if string(lowerCamalMarshal(tmp))[3] != 'n' {
+		t.Error("slice element not lower")
+	}
 }
 
 func TestParseDefault(t *testing.T) {

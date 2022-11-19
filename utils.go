@@ -35,6 +35,14 @@ func lowerCamalMarshal(i any) []byte {
 				lowerCamalMarshal(val.Field(i).Interface()))
 		}
 		return []byte("{" + strings.Join(tmp, ",") + "}")
+	case reflect.Slice:
+		val := reflect.ValueOf(i)
+		size := val.Len()
+		tmp := make([]string, size)
+		for i := 0; i < size; i++ {
+			tmp[i] = string(lowerCamalMarshal(val.Index(i).Interface()))
+		}
+		return []byte("[" + strings.Join(tmp, ",") + "]")
 	default:
 		r, e := json.Marshal(i)
 		if e != nil {
