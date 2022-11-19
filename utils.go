@@ -116,6 +116,20 @@ func dirExist(dir string) (bool, error) {
 	return false, nil
 }
 
+func isAllowedFileType(filename string, allowes []string) bool {
+	doti := strings.LastIndex(filename, ".")
+	if doti < 0 {
+		return false
+	}
+	suffix := filename[doti:]
+	for _, allow := range allowes {
+		if suffix == allow {
+			return true
+		}
+	}
+	return false
+}
+
 func saveFileContent(path string, content []byte) error {
 	f, e := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0644)
 	if e != nil {

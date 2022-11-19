@@ -71,21 +71,7 @@ ueditor.BindHTTP(nil, nil, editor)
 #### 3. 桥接实现
 
 
-
-
-
-
-
 [^cdn]: 如果使用 CDN 或其他 `资源路径` ，此处需要注意 `config.js` 中所给 `serverUrl` 的值需与后端接口保持一致
-
-```js
-window.UEDITOR_CONFIG = {
-  //为编辑器实例添加一个路径，这个不能被注释
-  UEDITOR_HOME_URL: URL
-  
-  // 服务器统一请求接口路径
-  , serverUrl: "/ueditor-api"
-```
 
 
 

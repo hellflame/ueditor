@@ -20,11 +20,7 @@ const (
 
 const (
 	StateOK             = "SUCCESS"
-	StateUploadExceed   = "文件大小超出 upload_max_filesize 限制"
-	StateFileSizeExceed = "文件大小超出 MAX_FILE_SIZE 限制"
-	StateFileIncomplete = "文件未被完整上传"
-	StateFileNotUpload  = "没有文件被上传"
-	StateFileEmpty      = "上传文件为空"
+	StateFileSizeExceed = "文件大小超出限制"
 )
 
 type UploadResp struct {
@@ -181,10 +177,23 @@ func (u *UEditor) ListFiles(prefix string, offset, size int) ListResp {
 }
 
 func (u *UEditor) OnUploadImage(h *multipart.FileHeader, f io.Reader) UploadResp {
+	if h.Size > int64(u.config.ImageMaxSize) {
+		return UploadResp{State: StateFileSizeExceed}
+	}
+	mtype := h.Header.Get("Content-Type")
+	if !strings.HasPrefix(mtype, "image/") || !isAllowedFileType(h.Filename, u.config.ImageAllowFiles) {
+		return UploadResp{State: "非法图片类型"}
+	}
 	return u.SaveFile(ImageSaveBase, h, f)
 }
 
 func (u *UEditor) OnUploadFile(h *multipart.FileHeader, f io.Reader) UploadResp {
+	if h.Size > int64(u.config.FileMaxSize) {
+		return UploadResp{State: StateFileSizeExceed}
+	}
+	if !isAllowedFileType(h.Filename, u.config.FileAllowFiles) {
+		return UploadResp{State: "非法文件类型"}
+	}
 	return u.SaveFile(FileSaveBase, h, f)
 }
 

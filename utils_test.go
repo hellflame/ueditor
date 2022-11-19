@@ -33,3 +33,12 @@ func TestParseDefault(t *testing.T) {
 		t.Error("failed to apply")
 	}
 }
+
+func TestIsAllowedFileType(t *testing.T) {
+	if !isAllowedFileType("linux.a.img", []string{".img"}) {
+		t.Error("failed to judge")
+	}
+	if isAllowedFileType("ok", []string{}) {
+		t.Error("fail to judge")
+	}
+}
