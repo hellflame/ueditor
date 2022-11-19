@@ -1,6 +1,6 @@
 //go:build external
 
-package bridges
+package ueditor
 
 import "embed"
 
