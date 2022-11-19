@@ -1,0 +1,5 @@
+package ueditor
+
+func BindGin() {
+
+}
