@@ -17,11 +17,11 @@ var (
 )
 
 // specially for editor config marshal
-func lowerCamalMarshal(i any) []byte {
+func LowerCamalMarshal(i any) []byte {
 	tp := reflect.TypeOf(i)
 	switch tp.Kind() {
 	case reflect.Pointer:
-		return lowerCamalMarshal(reflect.ValueOf(i).Elem().Interface())
+		return LowerCamalMarshal(reflect.ValueOf(i).Elem().Interface())
 	case reflect.Struct:
 		val := reflect.ValueOf(i)
 		totalFields := tp.NumField()
@@ -32,7 +32,7 @@ func lowerCamalMarshal(i any) []byte {
 				name[0] += 'a' - 'A'
 			}
 			tmp[i] = fmt.Sprintf("\"%s\":%s", string(name),
-				lowerCamalMarshal(val.Field(i).Interface()))
+				LowerCamalMarshal(val.Field(i).Interface()))
 		}
 		return []byte("{" + strings.Join(tmp, ",") + "}")
 	case reflect.Slice:
@@ -40,7 +40,7 @@ func lowerCamalMarshal(i any) []byte {
 		size := val.Len()
 		tmp := make([]string, size)
 		for i := 0; i < size; i++ {
-			tmp[i] = string(lowerCamalMarshal(val.Index(i).Interface()))
+			tmp[i] = string(LowerCamalMarshal(val.Index(i).Interface()))
 		}
 		return []byte("[" + strings.Join(tmp, ",") + "]")
 	default:

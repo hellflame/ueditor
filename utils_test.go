@@ -8,14 +8,14 @@ func TestLowerCamalMarshal(t *testing.T) {
 	type linux struct {
 		Name string
 	}
-	if string(lowerCamalMarshal(linux{Name: "ok"}))[2] != 'n' {
+	if string(LowerCamalMarshal(linux{Name: "ok"}))[2] != 'n' {
 		t.Error("not lower")
 	}
-	if string(lowerCamalMarshal(&linux{Name: "ok"}))[2] != 'n' {
+	if string(LowerCamalMarshal(&linux{Name: "ok"}))[2] != 'n' {
 		t.Error("not lower")
 	}
 	tmp := []linux{{"hellflame"}}
-	if string(lowerCamalMarshal(tmp))[3] != 'n' {
+	if string(LowerCamalMarshal(tmp))[3] != 'n' {
 		t.Error("slice element not lower")
 	}
 }

@@ -18,7 +18,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 	editor.SetSrvPrefix(srvPrefix)
 	actionConfig, actionUpImage, actionUpFile, actionLsImage, actionLsFile := editor.GetActions()
 
-	// editor home asserts
+	// editor home assets
 	mux.Handle(c.EditorHome, http.FileServer(http.FS(c.Asset)))
 
 	// editor uploaded resource service
@@ -48,9 +48,9 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 			}
 
 			if action == actionUpImage {
-				resp = lowerCamalMarshal(editor.OnUploadImage(h, f))
+				resp = LowerCamalMarshal(editor.OnUploadImage(h, f))
 			} else {
-				resp = lowerCamalMarshal(editor.OnUploadFile(h, f))
+				resp = LowerCamalMarshal(editor.OnUploadFile(h, f))
 			}
 		case actionLsImage, actionLsFile:
 			size, e := strconv.Atoi(r.URL.Query().Get("size"))
@@ -62,9 +62,9 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 				offset = 0
 			}
 			if action == actionLsImage {
-				resp = lowerCamalMarshal(editor.OnListImages(offset, size))
+				resp = LowerCamalMarshal(editor.OnListImages(offset, size))
 			} else {
-				resp = lowerCamalMarshal(editor.OnListFiles(offset, size))
+				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))
 			}
 		default:
 			panic("unknown action")
