@@ -22,6 +22,13 @@ ueditor 的后端实现主要提供了三部分接口，`配置接口`、`文件
 
 具体使用方法可参考示例 [examples/plain/](examples/plain/)
 
+```bash
+# 启动示例
+go run serve.go
+```
+
+启动成功后默认访问 [http://localhost:8080/demo](http://localhost:8080/demo)
+
 ### 资源引入
 
 如上一节概念中所说，首先需要在页面中使用正确的 `资源路径` ，如默认的 `/assets/` ，并引入编辑器入口文件(ueditor.all.min.js)、配置文件(config.js)和本地化文件(lang/zh-cn/zh-cn.js)，如 [demo.html](examples/plain/demo.html) 中所示:
