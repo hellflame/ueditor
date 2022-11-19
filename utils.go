@@ -63,6 +63,9 @@ func applyDefault(v any) {
 	for i := 0; i < totalFields; i++ {
 		v := val.Field(i)
 		tag := tp.Elem().Field(i).Tag.Get("default")
+		if v.Type().Kind() == reflect.Struct && tag == "" {
+			applyDefault(v.Addr().Interface())
+		}
 		if v.CanSet() && tag != "" && isEmptyValue(v) {
 			switch v.Type().Kind() {
 			case reflect.String:

@@ -16,7 +16,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 	c = tidyConfig(c)
 	srvPrefix := c.SrcServePrefix // => /resource/
 	editor.SetSrvPrefix(srvPrefix)
-	actionConfig, actionUpImage, actionUpFile, actionLsImage, actionLsFile := editor.GetActions()
+	actions := editor.GetActions()
 
 	// editor home assets
 	mux.Handle(c.EditorHome, http.FileServer(http.FS(c.Asset)))
@@ -39,20 +39,22 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 		action := query.Get("action")
 		var resp []byte
 		switch action {
-		case actionConfig:
+		case actions.Config:
 			resp = editor.GetConfig()
-		case actionUpImage, actionUpFile:
+		case actions.UploadImage, actions.UploadFile, actions.UploadVideo:
 			f, h, e := r.FormFile("upfile")
 			if e != nil {
 				panic("invalid file")
 			}
-
-			if action == actionUpImage {
+			switch action {
+			case actions.UploadImage:
 				resp = LowerCamalMarshal(editor.OnUploadImage(h, f))
-			} else {
+			case actions.UploadFile:
 				resp = LowerCamalMarshal(editor.OnUploadFile(h, f))
+			case actions.UploadVideo:
+				resp = LowerCamalMarshal(editor.OnUploadVideo(h, f))
 			}
-		case actionLsImage, actionLsFile:
+		case actions.ListImages, actions.ListFiles:
 			size, e := strconv.Atoi(r.URL.Query().Get("size"))
 			if e != nil {
 				panic("invalid size")
@@ -61,7 +63,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 			if e != nil {
 				offset = 0
 			}
-			if action == actionLsImage {
+			if action == actions.ListImages {
 				resp = LowerCamalMarshal(editor.OnListImages(offset, size))
 			} else {
 				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))

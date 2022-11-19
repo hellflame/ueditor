@@ -11,11 +11,13 @@ type UEditor struct {
 	config    *Config
 	storage   Storage
 	srvPrefix string // resource servce prefix
+	actions   Actions
 }
 
 const (
 	ImageSaveBase = "images"
 	FileSaveBase  = "files"
+	VideoSaveBase = "videos"
 )
 
 const (
@@ -42,6 +44,19 @@ type ListResp struct {
 type FShard struct {
 	Url   string
 	Mtime int
+}
+
+type Actions struct {
+	Config string
+
+	UploadImage string
+	UploadFile  string
+
+	UploadVideo  string
+	Uploadscrawl string
+
+	ListImages string
+	ListFiles  string
 }
 
 type Config struct {
@@ -112,9 +127,18 @@ func NewEditor(c *Config, s Storage) *UEditor {
 		c = &Config{}
 	}
 	applyDefault(c)
+
+	actions := Actions{
+		Config:      c.ConfigActionName,
+		UploadImage: c.ImageActionName,
+		UploadFile:  c.FileActionName,
+		UploadVideo: c.VideoActionName,
+		ListImages:  c.ImageManagerActionName,
+		ListFiles:   c.FileManagerActionName,
+	}
 	// do some config check
 
-	return &UEditor{config: c, storage: s}
+	return &UEditor{config: c, storage: s, actions: actions}
 }
 
 func (u *UEditor) onUploadFile(name string, f io.Reader) {}
@@ -127,14 +151,8 @@ func (u *UEditor) SetSrvPrefix(prefix string) {
 	u.srvPrefix = prefix
 }
 
-func (u *UEditor) GetActions() (c, ui, fi, li, lf string) {
-	config := u.config
-	c = config.ConfigActionName
-	ui = config.ImageActionName
-	fi = config.FileActionName
-	li = config.ImageManagerActionName
-	lf = config.FileManagerActionName
-	return
+func (u *UEditor) GetActions() Actions {
+	return u.actions
 }
 
 func (u *UEditor) SaveFile(prefix string, h *multipart.FileHeader, f io.Reader) UploadResp {
@@ -195,6 +213,16 @@ func (u *UEditor) OnUploadFile(h *multipart.FileHeader, f io.Reader) UploadResp 
 		return UploadResp{State: "非法文件类型"}
 	}
 	return u.SaveFile(FileSaveBase, h, f)
+}
+
+func (u *UEditor) OnUploadVideo(h *multipart.FileHeader, f io.Reader) UploadResp {
+	if h.Size > int64(u.config.VideoMaxSize) {
+		return UploadResp{State: StateFileSizeExceed}
+	}
+	if !isAllowedFileType(h.Filename, u.config.VideoAllowFiles) {
+		return UploadResp{State: "非法视频类型"}
+	}
+	return u.SaveFile(VideoSaveBase, h, f)
 }
 
 func (u *UEditor) OnListImages(offset, size int) ListResp {

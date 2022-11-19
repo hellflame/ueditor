@@ -21,16 +21,23 @@ func TestLowerCamalMarshal(t *testing.T) {
 }
 
 func TestParseDefault(t *testing.T) {
+	type Part struct {
+		Parent string `default:"ok"`
+	}
 	type linux struct {
 		Name   string   `default:"fine"`
 		Age    int      `default:"18"`
 		Weight float64  `default:"12.5"`
 		Jobs   []string `default:"chef|waiter|teacher"`
+		Part
 	}
 	x := &linux{}
 	applyDefault(x)
 	if x.Name != "fine" || x.Age != 18 || x.Weight < 12 || x.Jobs[1] != "waiter" {
 		t.Error("failed to apply")
+	}
+	if x.Parent != "ok" {
+		t.Error("failed to apply for sub struct")
 	}
 }
 
