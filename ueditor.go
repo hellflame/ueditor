@@ -15,9 +15,10 @@ type UEditor struct {
 }
 
 const (
-	ImageSaveBase = "images"
-	FileSaveBase  = "files"
-	VideoSaveBase = "videos"
+	ImageSaveBase  = "images"
+	FileSaveBase   = "files"
+	VideoSaveBase  = "videos"
+	ScrawlSaveBase = "scrawls"
 )
 
 const (
@@ -129,12 +130,15 @@ func NewEditor(c *Config, s Storage) *UEditor {
 	applyDefault(c)
 
 	actions := Actions{
-		Config:      c.ConfigActionName,
-		UploadImage: c.ImageActionName,
-		UploadFile:  c.FileActionName,
-		UploadVideo: c.VideoActionName,
-		ListImages:  c.ImageManagerActionName,
-		ListFiles:   c.FileManagerActionName,
+		Config: c.ConfigActionName,
+
+		UploadImage:  c.ImageActionName,
+		UploadFile:   c.FileActionName,
+		UploadVideo:  c.VideoActionName,
+		Uploadscrawl: c.ScrawlActionName,
+
+		ListImages: c.ImageManagerActionName,
+		ListFiles:  c.FileManagerActionName,
 	}
 	// do some config check
 
@@ -203,6 +207,13 @@ func (u *UEditor) OnUploadImage(h *multipart.FileHeader, f io.Reader) UploadResp
 		return UploadResp{State: "非法图片类型"}
 	}
 	return u.SaveFile(ImageSaveBase, h, f)
+}
+
+func (u *UEditor) OnUploadScrawl(h *multipart.FileHeader, f io.Reader) UploadResp {
+	if h.Size > int64(u.config.ScrawlMaxSize) {
+		return UploadResp{State: StateFileSizeExceed}
+	}
+	return u.SaveFile(ScrawlSaveBase, h, f)
 }
 
 func (u *UEditor) OnUploadFile(h *multipart.FileHeader, f io.Reader) UploadResp {

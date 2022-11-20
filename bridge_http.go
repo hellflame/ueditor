@@ -1,10 +1,16 @@
 package ueditor
 
 import (
+	"bytes"
+	"encoding/base64"
+	"fmt"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.ServeMux {
@@ -23,7 +29,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 
 	// editor uploaded resource service
 	mux.HandleFunc(srvPrefix, func(w http.ResponseWriter, r *http.Request) {
-		meta, raw, e := editor.ReadFile(strings.TrimLeft(r.URL.Path, srvPrefix))
+		meta, raw, e := editor.ReadFile(strings.TrimPrefix(r.URL.Path, srvPrefix))
 		if e != nil {
 			w.WriteHeader(404)
 			return
@@ -54,6 +60,21 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 			case actions.UploadVideo:
 				resp = LowerCamalMarshal(editor.OnUploadVideo(h, f))
 			}
+		case actions.Uploadscrawl:
+			content, e := base64.StdEncoding.DecodeString(r.FormValue("upfile"))
+			if e != nil {
+				panic("invalid base64 => " + e.Error())
+			}
+			resp = LowerCamalMarshal(editor.OnUploadScrawl(
+				&multipart.FileHeader{
+					Filename: fmt.Sprintf("%d", time.Now().UnixNano()),
+					Header: textproto.MIMEHeader{
+						"Content-Type": []string{"image/png"},
+					},
+					Size: int64(len(content)),
+				},
+				bytes.NewBuffer(content)))
+
 		case actions.ListImages, actions.ListFiles:
 			size, e := strconv.Atoi(r.URL.Query().Get("size"))
 			if e != nil {
@@ -69,7 +90,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))
 			}
 		default:
-			panic("unknown action")
+			panic("unknown action => " + action)
 		}
 
 		callback := query.Get("callback")
