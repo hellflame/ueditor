@@ -23,6 +23,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 	srvPrefix := c.SrcServePrefix // => /resource/
 	editor.SetSrvPrefix(srvPrefix)
 	actions := editor.GetActions()
+	fieldName := editor.GetUploadFieldName()
 
 	// editor home assets
 	mux.Handle(c.EditorHome, http.FileServer(http.FS(c.Asset)))
@@ -48,7 +49,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 		case actions.Config:
 			resp = editor.GetConfig()
 		case actions.UploadImage, actions.UploadFile, actions.UploadVideo:
-			f, h, e := r.FormFile("upfile")
+			f, h, e := r.FormFile(fieldName)
 			if e != nil {
 				panic("invalid file")
 			}
@@ -61,7 +62,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 				resp = LowerCamalMarshal(editor.OnUploadVideo(h, f))
 			}
 		case actions.Uploadscrawl:
-			content, e := base64.StdEncoding.DecodeString(r.FormValue("upfile"))
+			content, e := base64.StdEncoding.DecodeString(r.FormValue(fieldName))
 			if e != nil {
 				panic("invalid base64 => " + e.Error())
 			}

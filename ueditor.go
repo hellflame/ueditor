@@ -12,6 +12,7 @@ type UEditor struct {
 	storage   Storage
 	srvPrefix string // resource servce prefix
 	actions   Actions
+	uniField  string // unified field name
 }
 
 const (
@@ -141,14 +142,23 @@ func NewEditor(c *Config, s Storage) *UEditor {
 		ListFiles:  c.FileManagerActionName,
 	}
 	// do some config check
+	if c.ImageFieldName != c.FileFieldName ||
+		c.ImageFieldName != c.ScrawlFieldName ||
+		c.ImageFieldName != c.VideoFieldName {
+		panic("request field name should all be the same")
+	}
 
-	return &UEditor{config: c, storage: s, actions: actions}
+	return &UEditor{config: c, storage: s, actions: actions, uniField: c.ImageFieldName}
 }
 
 func (u *UEditor) onUploadFile(name string, f io.Reader) {}
 
 func (u *UEditor) GetConfig() []byte {
 	return LowerCamalMarshal(*u.config)
+}
+
+func (u *UEditor) GetUploadFieldName() string {
+	return u.uniField
 }
 
 func (u *UEditor) SetSrvPrefix(prefix string) {
