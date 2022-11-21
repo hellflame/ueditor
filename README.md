@@ -4,6 +4,16 @@
 
 > 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用
 
+受支持环境：
+
+* 路由服务：
+  * http
+  * [gin](github.com/gin-gonic/gin)
+* 数据存储
+  * 本地
+* 数据索引
+  * 本地
+
 ## 一、安装
 
 ```bash
@@ -83,6 +93,18 @@ go build -tags external
 #### 2. 存储实现
 
 #### 3. 桥接实现
+
+后端在构建时默认会将所有桥接代码都进行构建，将 http，gin 等框架均打包进可执行文件中
+
+可首先添加编译条件 `nobridge` 仅用所有桥接代码，再添加如下条件选择需要保留的框架
+
+1. `onlyhttp` : 仅保留 http 框架代码
+2. `onlygin` : 仅保留 gin 框架代码
+
+```bash
+# 仅保留 gin 框架入口
+go build -tags "nobridge onlygin"
+```
 
 
 [^cdn]: 如果使用 CDN 或其他 `资源路径` ，此处需要注意 `config.js` 中所给 `serverUrl` 的值需与后端接口保持一致

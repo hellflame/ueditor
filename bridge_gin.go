@@ -1,3 +1,5 @@
+//go:build !nobridge || (nobridge && onlygin)
+
 package ueditor
 
 import (
