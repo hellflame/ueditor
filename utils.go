@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"reflect"
 	"strconv"
@@ -168,4 +169,19 @@ func isEmptyValue(v reflect.Value) bool {
 		return v.IsNil()
 	}
 	return false
+}
+
+func SendJsonResponse(w http.ResponseWriter, resp []byte) {
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(resp)
+}
+
+func SendJsonPRespons(w http.ResponseWriter, callback string, resp []byte) {
+	if !isFullAlpha(callback) {
+		panic("invalid jsonp method")
+	}
+	resp = append(resp, []byte(");")...)
+	resp = append([]byte(callback+"("), resp...)
+	w.Header().Add("Content-Type", "application/javascript")
+	w.Write(resp)
 }

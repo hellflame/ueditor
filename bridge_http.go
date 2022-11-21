@@ -98,25 +98,10 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 
 		callback := query.Get("callback")
 		if callback != "" {
-			sendJsonPRespons(w, callback, resp)
+			SendJsonPRespons(w, callback, resp)
 			return
 		}
-		sendJsonResponse(w, resp)
+		SendJsonResponse(w, resp)
 	})
 	return mux
-}
-
-func sendJsonResponse(w http.ResponseWriter, resp []byte) {
-	w.Header().Add("Content-Type", "application/json")
-	w.Write(resp)
-}
-
-func sendJsonPRespons(w http.ResponseWriter, callback string, resp []byte) {
-	if !isFullAlpha(callback) {
-		panic("invalid jsonp method")
-	}
-	resp = append(resp, []byte(");")...)
-	resp = append([]byte(callback+"("), resp...)
-	w.Header().Add("Content-Type", "application/javascript")
-	w.Write(resp)
 }
