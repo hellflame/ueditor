@@ -2,13 +2,15 @@
 
 一站式 ueditor go后端
 
+[![GoDoc](https://godoc.org/github.com/hellflame/ueditor?status.svg)](https://godoc.org/github.com/hellflame/ueditor) [![Go Report Card](https://goreportcard.com/badge/github.com/hellflame/ueditor)](https://goreportcard.com/report/github.com/hellflame/ueditor)
+
 > 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用
 
 受支持环境：
 
 * 路由服务：
   * http
-  * [gin](github.com/gin-gonic/gin)
+  * [gin](https://github.com/gin-gonic/gin)
 * 数据存储
   * 本地
 * 数据索引
