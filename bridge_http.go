@@ -53,8 +53,10 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 		case actions.UploadImage, actions.UploadFile, actions.UploadVideo:
 			f, h, e := r.FormFile(fieldName)
 			if e != nil {
-				panic("invalid file")
+				sendError(w, "invalid file")
+				return
 			}
+			defer f.Close()
 			switch action {
 			case actions.UploadImage:
 				resp = LowerCamalMarshal(editor.OnUploadImage(h, f))
@@ -66,7 +68,8 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 		case actions.Uploadscrawl:
 			content, e := base64.StdEncoding.DecodeString(r.FormValue(fieldName))
 			if e != nil {
-				panic("invalid base64 => " + e.Error())
+				sendError(w, "invalid base64 => "+e.Error())
+				return
 			}
 			resp = LowerCamalMarshal(editor.OnUploadScrawl(
 				&multipart.FileHeader{
@@ -81,7 +84,8 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 		case actions.ListImages, actions.ListFiles:
 			size, e := strconv.Atoi(r.URL.Query().Get("size"))
 			if e != nil {
-				panic("invalid size")
+				sendError(w, "invalid size")
+				return
 			}
 			offset, e := strconv.Atoi(r.URL.Query().Get("start"))
 			if e != nil {
@@ -93,7 +97,8 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))
 			}
 		default:
-			panic("unknown action => " + action)
+			sendError(w, "unknown action => "+action)
+			return
 		}
 
 		callback := query.Get("callback")

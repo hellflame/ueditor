@@ -185,3 +185,8 @@ func SendJsonPRespons(w http.ResponseWriter, callback string, resp []byte) {
 	w.Header().Add("Content-Type", "application/javascript")
 	w.Write(resp)
 }
+
+func sendError(writer http.ResponseWriter, msg string) {
+	writer.WriteHeader(400)
+	writer.Write([]byte(msg))
+}

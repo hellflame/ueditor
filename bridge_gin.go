@@ -74,9 +74,10 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 		case actions.UploadImage, actions.UploadFile, actions.UploadVideo:
 			f, h, e := ctx.Request.FormFile(fieldName)
 			if e != nil {
-				sendError(ctx, "invalid file")
+				sendError(ctx.Writer, "invalid file")
 				return
 			}
+			defer f.Close()
 			switch action {
 			case actions.UploadImage:
 				resp = LowerCamalMarshal(editor.OnUploadImage(h, f))
@@ -88,7 +89,7 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 		case actions.Uploadscrawl:
 			content, e := base64.StdEncoding.DecodeString(ctx.Request.FormValue(fieldName))
 			if e != nil {
-				sendError(ctx, "invalid base64 => "+e.Error())
+				sendError(ctx.Writer, "invalid base64 => "+e.Error())
 				return
 			}
 			resp = LowerCamalMarshal(editor.OnUploadScrawl(
@@ -104,7 +105,7 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 		case actions.ListImages, actions.ListFiles:
 			size, e := strconv.Atoi(query.Get("size"))
 			if e != nil {
-				sendError(ctx, "invalid size")
+				sendError(ctx.Writer, "invalid size")
 				return
 			}
 			offset, e := strconv.Atoi(query.Get("start"))
@@ -117,7 +118,7 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))
 			}
 		default:
-			sendError(ctx, "unknown action => "+action)
+			sendError(ctx.Writer, "unknown action => "+action)
 			return
 		}
 		callback := query.Get("callback")
@@ -128,9 +129,4 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 		SendJsonResponse(ctx.Writer, resp)
 	}
 	engine.GET(c.ApiPath, handler).POST(c.ApiPath, handler)
-}
-
-func sendError(ctx *gin.Context, msg string) {
-	ctx.Writer.WriteHeader(400)
-	ctx.Writer.Write([]byte(msg))
 }
