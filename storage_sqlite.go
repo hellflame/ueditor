@@ -1,3 +1,5 @@
+//go:build !nostorage || (nostorage && onlysqlite)
+
 package ueditor
 
 import (

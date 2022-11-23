@@ -1,3 +1,5 @@
+//go:build !nostorage || (nostorage && onlylocal)
+
 package ueditor
 
 import (
