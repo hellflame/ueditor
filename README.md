@@ -15,6 +15,7 @@
   * 本地
 * 数据索引
   * 本地
+  * sqlite
 
 ## 一、安装
 
@@ -66,6 +67,33 @@ go run serve.go
 ```
 
 启动成功后默认访问 [http://localhost:8080/demo](http://localhost:8080/demo)
+
+#### 更多后端服务配置
+
+* 本地存储可以基于sqlite作为数据索引
+
+```go
+// 此处选择该sqlite驱动，理论上可以选择支持database/sql的驱动均可
+import _ "github.com/mattn/go-sqlite3"
+
+func main() {
+  // 连接数据库
+	db, e := sql.Open("sqlite3", "resource.db")
+	if e != nil {
+		panic(e)
+	}
+	defer db.Close()
+
+  // 创建以本地存储作为介质的 editor 实例，文件将存储到本地 uploads 目录中，使用sqlite作为文件索引
+  editor := ueditor.NewEditor(nil, ueditor.NewSqliteStorage("uploads", db))
+
+  // 将后端接口服务与资源服务与默认的 http 服务绑定
+  ueditor.BindHTTP(nil, nil, editor)
+}
+
+```
+
+仅切换绑定到 `UEditor` 的 `Storage` 实现
 
 ## 四、说明
 

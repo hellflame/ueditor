@@ -13,6 +13,7 @@ import (
 
 var (
 	ErrFileAsDir       = errors.New("file used as dir")
+	ErrPathMalform     = errors.New("file path incorrect")
 	ErrFileMissing     = errors.New("target file not found")
 	ErrFileMetaMissing = errors.New("file meta not found")
 )
