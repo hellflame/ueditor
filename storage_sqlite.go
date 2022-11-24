@@ -23,6 +23,9 @@ type sqliteStorage struct {
 	tableName string
 }
 
+// NewSqliteStorage create a *sqliteStorage instance which implemented Storage interface
+//
+// File info is storged in given slite database, using table 'resources'
 func NewSqliteStorage(base string, db *sql.DB) *sqliteStorage {
 	tableName := "resources"
 	// do some db check

@@ -21,6 +21,9 @@ type LocalStorage struct {
 	Base string
 }
 
+// NewLocalStorage create a *LocalStorage instance which implemented Storage interface
+//
+// LocalStorage stores file & meta info on local file system, file & meta file are in pair
 func NewLocalStorage(base string) *LocalStorage {
 	return &LocalStorage{Base: base}
 }
