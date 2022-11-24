@@ -11,6 +11,7 @@
 * 路由服务：
   * http
   * [gin](https://github.com/gin-gonic/gin)
+  * [gorilla/mux](https://github.com/gorilla/mux)
 * 数据存储
   * 本地
 * 数据索引
@@ -68,7 +69,31 @@ go run serve.go
 
 启动成功后默认访问 [http://localhost:8080/demo](http://localhost:8080/demo)
 
-#### 更多后端服务配置
+#### > 更多后端服务配置
+
+* 绑定路由到 gin
+
+```diff
+- ueditor.BindHTTP(nil, nil, editor)
++ router := gin.Default()
++ ueditor.BindGin(router, nil, editor)
+```
+
+[完整示例](examples/gin-flavor/serve.go)
+
+* 绑定路由到 gorilla/mux
+
+```diff
+- ueditor.BindHTTP(nil, nil, editor)
++ router := mux.NewRouter()
++ ueditor.BindMux(router, nil, editor)
+```
+
+[完整示例](examples/mux-flavor/serve.go)
+
+
+
+#### > 更多存储服务配置
 
 * 本地存储可以基于sqlite作为数据索引
 
@@ -145,6 +170,7 @@ go build -tags "nostorage onlylocal"
 
 1. `onlyhttp` : 仅保留 http 框架代码
 2. `onlygin` : 仅保留 gin 框架代码
+2. `onlymux` : 仅保留 mux 框架代码
 
 ```bash
 # 仅保留 gin 框架入口
