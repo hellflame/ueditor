@@ -14,8 +14,6 @@ import (
 	"time"
 )
 
-const hashAsDirIndent = 2
-
 type sqliteStorage struct {
 	base string
 	db   *sql.DB
@@ -43,10 +41,6 @@ func NewSqliteStorage(base string, db *sql.DB) *sqliteStorage {
 	}
 
 	return &sqliteStorage{base, db, tableName}
-}
-
-func cutHashToPath(raw string) (head string, tail string) {
-	return raw[:hashAsDirIndent], raw[hashAsDirIndent:]
 }
 
 func (s *sqliteStorage) List(prefix string, offset, limit int) (files []FileInfo, total int) {
