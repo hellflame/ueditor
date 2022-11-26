@@ -101,21 +101,21 @@ go run serve.go
 // 此处选择该sqlite驱动，理论上可以选择支持database/sql的驱动均可
 import _ "github.com/mattn/go-sqlite3"
 
-func main() {
-  // 连接sqlite数据库 resource.db
-  db, e := sql.Open("sqlite3", "resource.db")
-  if e != nil {
-    panic(e)
-  }
-	defer db.Close()
+...
 
-  // 创建以本地存储作为介质的 editor 实例，文件将存储到本地 uploads 目录中，使用sqlite作为文件索引
-  // sqlite 会在这里初始化时自动检查表或创建表
-  editor := ueditor.NewEditor(nil, ueditor.NewSqliteStorage("uploads", db))
-
-  // 将后端接口服务与资源服务与默认的 http 服务绑定
-  ueditor.BindHTTP(nil, nil, editor)
+// 连接sqlite数据库 resource.db
+db, e := sql.Open("sqlite3", "resource.db")
+if e != nil {
+  panic(e)
 }
+defer db.Close()
+
+// 创建以本地存储作为介质的 editor 实例，文件将存储到本地 uploads 目录中，使用sqlite作为文件索引
+// sqlite 会在这里初始化时自动检查表或创建表
+editor := ueditor.NewEditor(nil, ueditor.NewSqliteStorage("uploads", db))
+
+...
+
 
 ```
 
@@ -132,16 +132,17 @@ import (
   "gorm.io/gorm"
 )
 
-func main() {
-  // 此处使用gorm提供的sqlite驱动
-  db, _ := gorm.Open(sqlite.Open("resource.db"))
+...
 
-  // 通过 NewGormStorage 绑定 gorm 实例
-  // gorm 会在此时检查表或创建表
-  editor := ueditor.NewEditor(nil, ueditor.NewGormStorage("uploads", db))
-  
-	...
-}
+// 此处使用gorm提供的sqlite驱动
+db, _ := gorm.Open(sqlite.Open("resource.db"))
+
+// 通过 NewGormStorage 绑定 gorm 实例
+// gorm 会在此时检查表或创建表
+editor := ueditor.NewEditor(nil, ueditor.NewGormStorage("uploads", db))
+
+...
+
 ```
 
 [完整示例](examples/plain-gorm/serve.go)
@@ -158,8 +159,8 @@ if e != nil {
 }
 // create editor with storage
 editor := ueditor.NewEditor(nil, ueditor.NewMinioStorage(client))
-// bind serve routes to editor backend & storage backend
-ueditor.BindHTTP(nil, nil, editor)
+
+...
 ```
 
 [完整示例](examples/plain-minio/serve.go)
