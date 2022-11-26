@@ -17,6 +17,7 @@
 * 数据索引
   * 本地
   * sqlite
+  * [gorm](https://gorm.io/) (orm)
 
 ## 一、安装
 
@@ -91,8 +92,6 @@ go run serve.go
 
 [完整示例](examples/mux-flavor/serve.go)
 
-
-
 #### > 更多存储服务配置
 
 * 本地存储可以基于sqlite作为数据索引
@@ -122,6 +121,29 @@ func main() {
 仅切换绑定到 `UEditor` 的 `Storage` 实现
 
 该方式仅将文件元信息等数据存储到 sqlite 中，文件实体内容依然存储在本地，为避免文件过于集中，此时将资源文件按照 hash 前两个字符分割到不同目录中
+
+* 本地存储可以通过orm框架 gorm 映射mysql、sqlite、psq等数据存储服务存储数据索引
+
+```go
+import (
+  "github.com/hellflame/ueditor"
+  "gorm.io/driver/sqlite"
+  "gorm.io/gorm"
+)
+
+func main() {
+  // 此处使用gorm提供的sqlite驱动
+  db, _ := gorm.Open(sqlite.Open("resource.db"))
+
+  // 通过 NewGormStorage 绑定 gorm 实例
+  // gorm 会在此时检查表或创建表
+  editor := ueditor.NewEditor(nil, ueditor.NewGormStorage("uploads", db))
+  
+	...
+}
+```
+
+[完整示例](examples/plain-gorm/serve.go)
 
 ## 四、说明
 
@@ -155,7 +177,8 @@ go build -tags external
 可首先添加编译条件 `nostorage` 以禁用所有资源存储代码，再添加如下条件选择需要保留的资源存储方式
 
 1. `onlylocal` : 仅保留本地存储 + 本地索引代码
-2. `onlysqlite` : 仅保留本地存储 + sqlite索引代码
+2. `onlysqlite` : 仅保留本地存储 + sqlite 索引代码
+2. `onlygorm`：仅保留本地存储 + gorm 框架代码
 
 ```bash
 # 仅保留本地存储 + 本地索引

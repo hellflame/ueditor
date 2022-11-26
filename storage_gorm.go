@@ -1,4 +1,4 @@
-//go:build !nostorage || (nostorage && onlysqlite)
+//go:build !nostorage || (nostorage && onlygorm)
 
 package ueditor
 
