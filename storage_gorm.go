@@ -19,10 +19,9 @@ import (
 type gormStorage struct {
 	base string
 	db   *gorm.DB
-
-	tableName string
 }
 
+// gorm 模型定义 - 表结构
 type Resources struct {
 	Category string `gorm:"uniqueIndex:ukey,size:50"`
 	Hash     string `gorm:"uniqueIndex:ukey,size:50"`
@@ -33,20 +32,18 @@ type Resources struct {
 	Chunks   int `gorm:"default:0"`
 }
 
+// NewGormStorage create a *gormStorage instance which implemented Storage interface
+//
+// File info is storged in given database instance, using table 'resources'
 func NewGormStorage(base string, db *gorm.DB) *gormStorage {
-	tableName := "resources"
 	// do some db check
-	db.AutoMigrate(&Resources{})
 	mg := db.Migrator()
 	if !mg.HasTable(&Resources{}) {
 		if e := mg.CreateTable(&Resources{}); e != nil {
 			panic(e)
 		}
-		if e := mg.CreateIndex(&Resources{}, "ukey"); e != nil {
-			panic(e)
-		}
 	}
-	return &gormStorage{base, db, tableName}
+	return &gormStorage{base, db}
 }
 
 func (s *gormStorage) List(prefix string, offset, limit int) (files []FileInfo, total int) {

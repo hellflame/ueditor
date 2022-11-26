@@ -18,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 绑定路由到 gin 环境
 func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 	// init config
 	c = tidyConfig(c)

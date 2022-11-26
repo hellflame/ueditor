@@ -17,6 +17,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// 绑定路由到 gorrila/mux
 func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 	// init config
 	c = tidyConfig(c)

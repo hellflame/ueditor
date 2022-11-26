@@ -18,7 +18,7 @@ var (
 	ErrFileMetaMissing = errors.New("file meta not found")
 )
 
-// specially for editor config marshal
+// json序列化时将首字母转小写
 func LowerCamalMarshal(i any) []byte {
 	tp := reflect.TypeOf(i)
 	switch tp.Kind() {

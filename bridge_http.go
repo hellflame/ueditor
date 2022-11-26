@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// 绑定路由到系统库 http
 func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.ServeMux {
 	if mux == nil {
 		mux = http.DefaultServeMux

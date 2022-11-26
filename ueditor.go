@@ -27,6 +27,7 @@ const (
 	StateFileSizeExceed = "文件大小超出限制"
 )
 
+// ueditor 上传后响应结构
 type UploadResp struct {
 	State    string
 	Url      string
@@ -36,6 +37,7 @@ type UploadResp struct {
 	Size     int
 }
 
+// ueditor 文件列表响应结构
 type ListResp struct {
 	State string
 	List  []FShard
@@ -43,11 +45,13 @@ type ListResp struct {
 	Total int
 }
 
+// 文件列表响应单个元素
 type FShard struct {
 	Url   string
 	Mtime int
 }
 
+// ueditor 文件上传参数
 type Actions struct {
 	Config string
 
@@ -61,6 +65,7 @@ type Actions struct {
 	ListFiles  string
 }
 
+// 前端 ueditor 配置参数，一般默认值无需再调整
 type Config struct {
 	ConfigActionName string `default:"config"`
 
@@ -124,6 +129,7 @@ type Config struct {
 	FileManagerAllowFiles []string `default:".png|.jpg|.jpeg|.gif|.bmp|.flv|.swf|.mkv|.avi|.rm|.rmvb|.mpeg|.mpg|.ogg|.ogv|.mov|.wmv|.mp4|.webm|.mp3|.wav|.mid|.rar|.zip|.tar|.gz|.7z|.bz2|.cab|.iso|.doc|.docx|.xls|.xlsx|.ppt|.pptx|.pdf|.txt|.md|.xml"`
 }
 
+// NewEditor create *UEditor for bingding use
 func NewEditor(c *Config, s Storage) *UEditor {
 	if c == nil {
 		c = &Config{}
