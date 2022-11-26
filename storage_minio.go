@@ -77,8 +77,8 @@ func (m *minioStorage) Save(prefix string, h *multipart.FileHeader, f io.Reader)
 	if e := m.prepBucket(prefix); e != nil {
 		return "", e
 	}
-	content := make([]byte, 0, 409600)
-	reader := bufio.NewReaderSize(f, 409600)
+	content := make([]byte, 0, 4096)
+	reader := bufio.NewReaderSize(f, 4096)
 	for {
 		if len(content) == cap(content) {
 			// Add more capacity (let append pick how much).

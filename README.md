@@ -14,6 +14,7 @@
   * [gorilla/mux](https://github.com/gorilla/mux)
 * 数据存储
   * 本地
+  * [minio](https://min.io/)
 * 数据索引
   * 本地
   * sqlite
@@ -145,6 +146,26 @@ func main() {
 
 [完整示例](examples/plain-gorm/serve.go)
 
+* minio 存储
+
+```go
+// 使用自己的 minio 实例
+client, e := minio.New("192.168.1.8:9000", &minio.Options{
+  Creds: credentials.NewStaticV4("minioadmin", "minioadmin", ""),
+})
+if e != nil {
+  panic(e)
+}
+// create editor with storage
+editor := ueditor.NewEditor(nil, ueditor.NewMinioStorage(client))
+// bind serve routes to editor backend & storage backend
+ueditor.BindHTTP(nil, nil, editor)
+```
+
+[完整示例](examples/plain-minio/serve.go)
+
+此时本地不存储上传的文件，返回给 ueditor 的链接将使用 minio 链接。minio endpoint 将用于生成资源链接，所以需要注意其可访问性
+
 ## 四、说明
 
 ### 架构
@@ -179,6 +200,7 @@ go build -tags external
 1. `onlylocal` : 仅保留本地存储 + 本地索引代码
 2. `onlysqlite` : 仅保留本地存储 + sqlite 索引代码
 2. `onlygorm`：仅保留本地存储 + gorm 框架代码
+2. `onlyminio` : 仅保留minio存储
 
 ```bash
 # 仅保留本地存储 + 本地索引
