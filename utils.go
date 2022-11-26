@@ -16,6 +16,7 @@ var (
 	ErrPathMalform     = errors.New("file path incorrect")
 	ErrFileMissing     = errors.New("target file not found")
 	ErrFileMetaMissing = errors.New("file meta not found")
+	ErrNotImpled       = errors.New("method not implemented")
 )
 
 // json序列化时将首字母转小写
