@@ -2,9 +2,9 @@
 
 一站式 ueditor go后端
 
-[![GoDoc](https://godoc.org/github.com/hellflame/ueditor?status.svg)](https://godoc.org/github.com/hellflame/ueditor) [![Go Report Card](https://goreportcard.com/badge/github.com/hellflame/ueditor)](https://goreportcard.com/report/github.com/hellflame/ueditor)
+API文档: [![GoDoc](https://godoc.org/github.com/hellflame/ueditor?status.svg)](https://godoc.org/github.com/hellflame/ueditor) [![Go Report Card](https://goreportcard.com/badge/github.com/hellflame/ueditor)](https://goreportcard.com/report/github.com/hellflame/ueditor)
 
-> 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用
+> 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用 [^outdate]
 
 受支持环境：
 
@@ -179,13 +179,13 @@ editor := ueditor.NewEditor(nil, ueditor.NewMinioStorage(client))
 
 基本的__本地存储__将上传文件存储到不同的类型目录下(图片、文件、视频等)，以文件的md5作为文件名和元数据文件名存储实际的文件内容，同一个文件上传多次只会存储一个副本。原始数据文件与元数据文件需要同时存在才能提供完整的资源服务。
 
-`Bridge` 主要目的为将实现的接口添加到当前 http 接口服务中，由于不同后端框架 (http、gin、beego) 有自己的路由定义和响应方式，需要使用对应的桥接方法，比如示例中的 `BindHTTP` 
+`Bridge` 主要目的为将实现的接口添加到当前 http 接口服务中，由于不同后端框架 (http、gin、mux) 有自己的路由定义和响应方式，需要使用对应的桥接方法，比如示例中的 `BindHTTP` 
 
 ### 条件编译
 
 #### 1. 资源路径
 
-该后端服务在编译时默认会将 `资源路径` 进行内嵌，若已使用外部资源，可添加编译条件 `external` 降低发布尺寸。
+该后端服务在编译时默认会将 `资源路径` 进行内嵌，若已使用外部资源[^external]，可添加编译条件 `external` 降低发布尺寸。
 
 ```bash
 # 取消嵌入资源路径，此时ueditor前端资源需要外部引入
@@ -223,10 +223,29 @@ go build -tags "nostorage onlylocal"
 go build -tags "nobridge onlygin"
 ```
 
+## 五、示例
+
+为了减少不必要的包依赖，示例服务入口文件默认无法直接构建，可去除头部编译条件 `//go:build ignore` 进行构建，调试时通过 `go run serve.go` 直接运行，如果提示依赖缺失，需要 `go get` 安装依赖
+
+#### [1. http + 纯本地存储](examples/plain)
+
+#### [2. http + 本地存储 + sqlite索引](examples/plain-sqlite)
+
+#### [3. http + 本地存储 + gorm(sqlite)索引](examples/plain-gorm)
+
+#### [4. http + minio](examples/plain-minio)
+
+#### [5. gin + 纯本地存储](examples/gin-flavor)
+
+#### [6. mux + 纯本地存储](examples/mux-flavor)
+
+
+
+[^outdate]: 自己在使用时偶尔会修复可见的前端bug
 [^cdn]: 如果使用 CDN 或其他 `资源路径` ，此处需要注意 `config.js` 中所给 `serverUrl` 的值需与后端接口保持一致
 [^version]: 本来想用最新的开发版 dev-1.5.0，但打包后发现部分功能存在问题，所以还是用了最后一个发布版本
 
-
+[^external]: 比如使用其他版本的 ueditor 、修复版本或同接口的兼容编辑器
 
 
 

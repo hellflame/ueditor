@@ -56,7 +56,7 @@ func (s *sqliteStorage) List(prefix string, offset, limit int) (files []FileInfo
 		if e := rows.Scan(&fname, &hash, &created); e != nil {
 			panic(e)
 		}
-		head, tail := cutHashToPath(hash)
+		head, tail := cutToPieces(hash)
 		files = append(files, FileInfo{
 			Name:   fname,
 			Modify: int(created),
@@ -80,7 +80,7 @@ func (s *sqliteStorage) Save(prefix string, h *multipart.FileHeader, f io.Reader
 		return "", e
 	}
 	contentHash := fmt.Sprintf("%x", md5.Sum(content))
-	head, tail := cutHashToPath(contentHash)
+	head, tail := cutToPieces(contentHash)
 	saveDir := path.Join(s.base, prefix, head)
 	contentPath := path.Join(saveDir, tail)
 

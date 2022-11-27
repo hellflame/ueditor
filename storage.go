@@ -29,6 +29,6 @@ type Storage interface {
 }
 
 // 当有额外存储设施 (sqlite, mysql等) 时，可分散资源存储
-func cutHashToPath(raw string) (head string, tail string) {
+func cutToPieces(raw string) (head string, tail string) {
 	return raw[:hashAsDirIndent], raw[hashAsDirIndent:]
 }

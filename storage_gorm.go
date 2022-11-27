@@ -51,7 +51,7 @@ func (s *gormStorage) List(prefix string, offset, limit int) (files []FileInfo, 
 	s.db.Where("category = ?", prefix).Select("filename", "hash", "created").Order("created desc").Limit(limit).Offset(offset).Find(&result)
 
 	for _, src := range result {
-		head, tail := cutHashToPath(src.Hash)
+		head, tail := cutToPieces(src.Hash)
 		files = append(files, FileInfo{
 			Name:   src.Filename,
 			Modify: int(src.Size),
@@ -70,7 +70,7 @@ func (s *gormStorage) Save(prefix string, h *multipart.FileHeader, f io.Reader) 
 		return "", e
 	}
 	contentHash := fmt.Sprintf("%x", md5.Sum(content))
-	head, tail := cutHashToPath(contentHash)
+	head, tail := cutToPieces(contentHash)
 	saveDir := path.Join(s.base, prefix, head)
 	contentPath := path.Join(saveDir, tail)
 

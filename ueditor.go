@@ -51,7 +51,7 @@ type FShard struct {
 	Mtime int
 }
 
-// ueditor 文件上传参数
+// ueditor 文件上传所用参数集合
 type Actions struct {
 	Config string
 
@@ -65,7 +65,7 @@ type Actions struct {
 	ListFiles  string
 }
 
-// 前端 ueditor 配置参数，一般默认值无需再调整
+// 前端 ueditor 配置参数，如上传文件大小限制、文件后缀等
 type Config struct {
 	ConfigActionName string `default:"config"`
 
