@@ -4,7 +4,7 @@
 
 API文档: [![GoDoc](https://godoc.org/github.com/hellflame/ueditor?status.svg)](https://godoc.org/github.com/hellflame/ueditor) [![Go Report Card](https://goreportcard.com/badge/github.com/hellflame/ueditor)](https://goreportcard.com/report/github.com/hellflame/ueditor)
 
-> 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用 [^outdate]
+> 虽然官方 ueditor 已经停止维护，但个人觉得现在功能比较完善的前端富文本编辑器中，还是 ueditor 比较好用 [^outdate]。在类似管理后台或某些不对外开放的场景，功能强大的富文本编辑器用起来总是比较省心，如果开放给普通用户使用，多少还是有些不放心。
 
 受支持环境：
 
@@ -165,7 +165,7 @@ editor := ueditor.NewEditor(nil, ueditor.NewMinioStorage(client))
 
 [完整示例](examples/plain-minio/serve.go)
 
-此时本地不存储上传的文件，返回给 ueditor 的链接将使用 minio 链接。minio endpoint 将用于生成资源链接，所以需要注意其可访问性
+此时本地不存储上传的文件，返回给 ueditor 的资源链接将使用 minio 链接。minio endpoint 将用于生成资源链接，所以需要注意其可访问性
 
 ## 四、说明
 
@@ -177,7 +177,7 @@ editor := ueditor.NewEditor(nil, ueditor.NewMinioStorage(client))
 
 `Storage` 定义了存储相关的接口，除了可将资源数据存储到本地外，还可根据该接口协议实现 `minio` 等外部资源的存储。可根据需要进行实现 (如配合 mysql, mongo 等数据库)。
 
-基本的__本地存储__将上传文件存储到不同的类型目录下(图片、文件、视频等)，以文件的md5作为文件名和元数据文件名存储实际的文件内容，同一个文件上传多次只会存储一个副本。原始数据文件与元数据文件需要同时存在才能提供完整的资源服务。
+基本的 __本地存储__ 将上传文件存储到不同的类型目录下(图片、文件、视频等)，以文件的md5作为文件名和元数据文件名存储实际的文件内容，同一个文件上传多次只会存储一个副本。原始数据文件与元数据文件需要同时存在才能提供完整的资源服务。
 
 `Bridge` 主要目的为将实现的接口添加到当前 http 接口服务中，由于不同后端框架 (http、gin、mux) 有自己的路由定义和响应方式，需要使用对应的桥接方法，比如示例中的 `BindHTTP` 
 
