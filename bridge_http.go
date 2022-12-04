@@ -66,7 +66,7 @@ func BindHTTP(mux *http.ServeMux, c *ServiceConfig, editor *UEditor) *http.Serve
 			case actions.UploadVideo:
 				resp = LowerCamelMarshal(editor.OnUploadVideo(h, f))
 			}
-		case actions.Uploadscrawl:
+		case actions.UploadScrawl:
 			content, e := base64.StdEncoding.DecodeString(r.FormValue(fieldName))
 			if e != nil {
 				sendError(w, "invalid base64 => "+e.Error())

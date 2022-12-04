@@ -34,7 +34,7 @@ type Resources struct {
 
 // NewGormStorage create a *gormStorage instance which implemented Storage interface
 //
-// File info is storged in given database instance, using table 'resources'
+// File info is stored in given database instance, using table 'resources'
 func NewGormStorage(base string, db *gorm.DB) *gormStorage {
 	// do some db check
 	mg := db.Migrator()

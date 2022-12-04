@@ -10,7 +10,7 @@ import (
 type UEditor struct {
 	config    *Config
 	storage   Storage
-	srvPrefix string // resource servce prefix
+	srvPrefix string // resource service prefix
 	actions   Actions
 	uniField  string // unified field name
 }
@@ -59,7 +59,7 @@ type Actions struct {
 	UploadFile  string
 
 	UploadVideo  string
-	Uploadscrawl string
+	UploadScrawl string
 
 	ListImages string
 	ListFiles  string
@@ -129,7 +129,7 @@ type Config struct {
 	FileManagerAllowFiles []string `default:".png|.jpg|.jpeg|.gif|.bmp|.flv|.swf|.mkv|.avi|.rm|.rmvb|.mpeg|.mpg|.ogg|.ogv|.mov|.wmv|.mp4|.webm|.mp3|.wav|.mid|.rar|.zip|.tar|.gz|.7z|.bz2|.cab|.iso|.doc|.docx|.xls|.xlsx|.ppt|.pptx|.pdf|.txt|.md|.xml"`
 }
 
-// NewEditor create *UEditor for bingding use
+// NewEditor create *UEditor for binding use
 func NewEditor(c *Config, s Storage) *UEditor {
 	if c == nil {
 		c = &Config{}
@@ -142,7 +142,7 @@ func NewEditor(c *Config, s Storage) *UEditor {
 		UploadImage:  c.ImageActionName,
 		UploadFile:   c.FileActionName,
 		UploadVideo:  c.VideoActionName,
-		Uploadscrawl: c.ScrawlActionName,
+		UploadScrawl: c.ScrawlActionName,
 
 		ListImages: c.ImageManagerActionName,
 		ListFiles:  c.FileManagerActionName,

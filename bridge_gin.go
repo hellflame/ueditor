@@ -87,7 +87,7 @@ func BindGin(engine *gin.Engine, c *ServiceConfig, editor *UEditor) {
 			case actions.UploadVideo:
 				resp = LowerCamelMarshal(editor.OnUploadVideo(h, f))
 			}
-		case actions.Uploadscrawl:
+		case actions.UploadScrawl:
 			content, e := base64.StdEncoding.DecodeString(ctx.Request.FormValue(fieldName))
 			if e != nil {
 				sendError(ctx.Writer, "invalid base64 => "+e.Error())

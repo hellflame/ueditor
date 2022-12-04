@@ -64,7 +64,7 @@ func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 			case actions.UploadVideo:
 				resp = LowerCamelMarshal(editor.OnUploadVideo(h, f))
 			}
-		case actions.Uploadscrawl:
+		case actions.UploadScrawl:
 			content, e := base64.StdEncoding.DecodeString(r.FormValue(fieldName))
 			if e != nil {
 				sendError(w, "invalid base64 => "+e.Error())
