@@ -4,18 +4,18 @@ import (
 	"testing"
 )
 
-func TestLowerCamalMarshal(t *testing.T) {
+func TestLowerCamelMarshal(t *testing.T) {
 	type linux struct {
 		Name string
 	}
-	if string(LowerCamalMarshal(linux{Name: "ok"}))[2] != 'n' {
+	if string(LowerCamelMarshal(linux{Name: "ok"}))[2] != 'n' {
 		t.Error("not lower")
 	}
-	if string(LowerCamalMarshal(&linux{Name: "ok"}))[2] != 'n' {
+	if string(LowerCamelMarshal(&linux{Name: "ok"}))[2] != 'n' {
 		t.Error("not lower")
 	}
 	tmp := []linux{{"hellflame"}}
-	if string(LowerCamalMarshal(tmp))[3] != 'n' {
+	if string(LowerCamelMarshal(tmp))[3] != 'n' {
 		t.Error("slice element not lower")
 	}
 }

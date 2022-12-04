@@ -20,11 +20,11 @@ var (
 )
 
 // json序列化时将首字母转小写
-func LowerCamalMarshal(i any) []byte {
+func LowerCamelMarshal(i any) []byte {
 	tp := reflect.TypeOf(i)
 	switch tp.Kind() {
 	case reflect.Pointer:
-		return LowerCamalMarshal(reflect.ValueOf(i).Elem().Interface())
+		return LowerCamelMarshal(reflect.ValueOf(i).Elem().Interface())
 	case reflect.Struct:
 		val := reflect.ValueOf(i)
 		totalFields := tp.NumField()
@@ -35,7 +35,7 @@ func LowerCamalMarshal(i any) []byte {
 				name[0] += 'a' - 'A'
 			}
 			tmp[i] = fmt.Sprintf("\"%s\":%s", string(name),
-				LowerCamalMarshal(val.Field(i).Interface()))
+				LowerCamelMarshal(val.Field(i).Interface()))
 		}
 		return []byte("{" + strings.Join(tmp, ",") + "}")
 	case reflect.Slice:
@@ -43,7 +43,7 @@ func LowerCamalMarshal(i any) []byte {
 		size := val.Len()
 		tmp := make([]string, size)
 		for i := 0; i < size; i++ {
-			tmp[i] = string(LowerCamalMarshal(val.Index(i).Interface()))
+			tmp[i] = string(LowerCamelMarshal(val.Index(i).Interface()))
 		}
 		return []byte("[" + strings.Join(tmp, ",") + "]")
 	default:
@@ -122,13 +122,13 @@ func dirExist(dir string) (bool, error) {
 	return false, nil
 }
 
-func isAllowedFileType(filename string, allowes []string) bool {
+func isAllowedFileType(filename string, allows []string) bool {
 	doti := strings.LastIndex(filename, ".")
 	if doti < 0 {
 		return false
 	}
 	suffix := filename[doti:]
-	for _, allow := range allowes {
+	for _, allow := range allows {
 		if suffix == allow {
 			return true
 		}
@@ -178,7 +178,7 @@ func SendJsonResponse(w http.ResponseWriter, resp []byte) {
 	w.Write(resp)
 }
 
-func SendJsonPRespons(w http.ResponseWriter, callback string, resp []byte) {
+func SendJsonPResponse(w http.ResponseWriter, callback string, resp []byte) {
 	if !isFullAlpha(callback) {
 		panic("invalid jsonp method")
 	}

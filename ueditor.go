@@ -160,7 +160,7 @@ func NewEditor(c *Config, s Storage) *UEditor {
 func (u *UEditor) onUploadFile(name string, f io.Reader) {}
 
 func (u *UEditor) GetConfig() []byte {
-	return LowerCamalMarshal(*u.config)
+	return LowerCamelMarshal(*u.config)
 }
 
 func (u *UEditor) GetUploadFieldName() string {

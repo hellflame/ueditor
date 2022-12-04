@@ -58,11 +58,11 @@ func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 			defer f.Close()
 			switch action {
 			case actions.UploadImage:
-				resp = LowerCamalMarshal(editor.OnUploadImage(h, f))
+				resp = LowerCamelMarshal(editor.OnUploadImage(h, f))
 			case actions.UploadFile:
-				resp = LowerCamalMarshal(editor.OnUploadFile(h, f))
+				resp = LowerCamelMarshal(editor.OnUploadFile(h, f))
 			case actions.UploadVideo:
-				resp = LowerCamalMarshal(editor.OnUploadVideo(h, f))
+				resp = LowerCamelMarshal(editor.OnUploadVideo(h, f))
 			}
 		case actions.Uploadscrawl:
 			content, e := base64.StdEncoding.DecodeString(r.FormValue(fieldName))
@@ -70,7 +70,7 @@ func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 				sendError(w, "invalid base64 => "+e.Error())
 				return
 			}
-			resp = LowerCamalMarshal(editor.OnUploadScrawl(
+			resp = LowerCamelMarshal(editor.OnUploadScrawl(
 				&multipart.FileHeader{
 					Filename: fmt.Sprintf("%d", time.Now().UnixNano()),
 					Header: textproto.MIMEHeader{
@@ -91,9 +91,9 @@ func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 				offset = 0
 			}
 			if action == actions.ListImages {
-				resp = LowerCamalMarshal(editor.OnListImages(offset, size))
+				resp = LowerCamelMarshal(editor.OnListImages(offset, size))
 			} else {
-				resp = LowerCamalMarshal(editor.OnListFiles(offset, size))
+				resp = LowerCamelMarshal(editor.OnListFiles(offset, size))
 			}
 		default:
 			sendError(w, "unknown action => "+action)
@@ -102,7 +102,7 @@ func BindMux(mux *mux.Router, c *ServiceConfig, editor *UEditor) {
 
 		callback := query.Get("callback")
 		if callback != "" {
-			SendJsonPRespons(w, callback, resp)
+			SendJsonPResponse(w, callback, resp)
 			return
 		}
 		SendJsonResponse(w, resp)
